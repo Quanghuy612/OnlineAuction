@@ -1,5 +1,5 @@
 import { BrowserRouter as Router } from "react-router-dom";
-import { NotifyProvider } from "./contexts/NotifyProvider";
+import { NotifyProvider } from "./providers/NotifyProvider";
 import LoadingSpinner from "./components/LoadingSpinner";
 import AppRoutes from "./routes/AppRoutes";
 import { CookiesProvider } from "react-cookie";
