@@ -1,12 +1,7 @@
-import React, { createContext, useState, ReactNode, useEffect } from "react";
+import React, { useState, ReactNode, useEffect } from "react";
+import { NotifyContext } from "../contexts/NotifyContext";
 import Notify from "../components/Notify";
 import { useApi } from "../store/useApi";
-
-interface NotifyContextType {
-    showNotify: (message: string, severity?: "success" | "error" | "warning" | "info") => void;
-}
-
-export const NotifyContext = createContext<NotifyContextType | undefined>(undefined);
 
 export const NotifyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [open, setOpen] = useState(false);

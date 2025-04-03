@@ -40,6 +40,7 @@ const SidebarContent: React.FC<{ onToggleStatic: (value: boolean) => void; isSta
         <ListItem disablePadding>
             <ListItemButton component={Link} to="/">
                 <img src="images/logo.png" alt="Logo" style={{ width: 50, height: 50 }} />
+                <b>AUCTION</b>
             </ListItemButton>
             <FormControlLabel
                 control={<Checkbox checked={isStatic} onChange={(e) => onToggleStatic(e.target.checked)} />}

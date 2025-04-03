@@ -1,13 +1,14 @@
 import { create } from "zustand";
 import API from "../api/api";
+import { AxiosError } from "axios";
 
-interface ApiState<T = any> {
+interface ApiState<T = unknown> {
     data: T[];
     total: number;
     loading: boolean;
     error: string | null;
     success: string | null;
-    apiCall: (method: "GET" | "POST" | "PUT" | "DELETE", endpoint: string, params?: Record<string, any>, body?: any) => Promise<void>;
+    apiCall: (method: "GET" | "POST" | "PUT" | "DELETE", endpoint: string, params?: Record<string, unknown>, body?: unknown) => Promise<void>;
 }
 
 export const useApi = create<ApiState>((set) => ({
@@ -34,8 +35,15 @@ export const useApi = create<ApiState>((set) => ({
                 success: response.data.message || response.data.meta?.message || (response.data.success ? "Operation successful!" : ""),
                 loading: false,
             });
-        } catch (error: any) {
-            set({ error: error.response?.data?.message || "An error occurred", loading: false });
+        } catch (error: unknown) {
+            if (error instanceof AxiosError) {
+                set({
+                    error: error.response?.data?.message || "An error occurred",
+                    loading: false,
+                });
+            } else {
+                set({ error: "An unknown error occurred", loading: false });
+            }
         }
     },
 }));
