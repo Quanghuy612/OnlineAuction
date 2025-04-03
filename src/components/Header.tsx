@@ -1,7 +1,6 @@
 import { AppBar, Toolbar, Typography, IconButton, Box, Button } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { NavLink } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
 
 interface HeaderProps {
     isStatic: boolean;
@@ -11,7 +10,6 @@ interface HeaderProps {
 const drawerWidth = 240;
 
 const Header: React.FC<HeaderProps> = ({ isStatic, onToggle }) => {
-    const theme = useTheme();
     return (
         <AppBar
             position="fixed"
@@ -21,6 +19,7 @@ const Header: React.FC<HeaderProps> = ({ isStatic, onToggle }) => {
                 transition: "margin 0.3s ease-in-out, width 0.3s ease-in-out",
                 zIndex: 9,
             }}
+            className="header"
         >
             <Toolbar>
                 {!isStatic && (
@@ -33,36 +32,24 @@ const Header: React.FC<HeaderProps> = ({ isStatic, onToggle }) => {
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1 }}>
                     <NavLink to="/login">
-                        {({ isActive }) => (
-                            <Button
-                                sx={{
-                                    color: "white",
-                                    fontWeight: isActive ? "bold" : "normal",
-                                    backgroundColor: isActive ? theme.palette.primary.dark : "transparent",
-                                    "&:hover": {
-                                        backgroundColor: isActive ? theme.palette.primary.dark : theme.palette.primary.light,
-                                    },
-                                }}
-                            >
-                                Login
-                            </Button>
-                        )}
+                        <Button
+                            sx={{
+                                color: "white",
+                            }}
+                            className="btn_secondary-hover"
+                        >
+                            Login
+                        </Button>
                     </NavLink>
                     <NavLink to="/signup">
-                        {({ isActive }) => (
-                            <Button
-                                sx={{
-                                    color: "white",
-                                    fontWeight: isActive ? "bold" : "normal",
-                                    backgroundColor: isActive ? theme.palette.primary.dark : "transparent",
-                                    "&:hover": {
-                                        backgroundColor: isActive ? theme.palette.primary.dark : theme.palette.primary.light,
-                                    },
-                                }}
-                            >
-                                Sign Up
-                            </Button>
-                        )}
+                        <Button
+                            sx={{
+                                color: "white",
+                            }}
+                            className="btn_secondary-hover"
+                        >
+                            Sign Up
+                        </Button>
                     </NavLink>
                 </Box>
             </Toolbar>

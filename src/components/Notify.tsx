@@ -10,15 +10,7 @@ interface SnackbarProps {
 
 const Notify: React.FC<SnackbarProps> = ({ open, message, severity, onClose }) => {
     return (
-        <Snackbar
-            open={open}
-            autoHideDuration={3000}
-            onClose={onClose}
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            sx={{
-                marginTop: "50px",
-            }}
-        >
+        <Snackbar open={open} autoHideDuration={3000} onClose={onClose} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
             <Alert onClose={onClose} severity={severity} variant="filled">
                 {message}
             </Alert>

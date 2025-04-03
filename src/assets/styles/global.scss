@@ -9,5 +9,18 @@
 body {
     font-family: variables.$font-primary;
     background-color: variables.$bg-color;
-    color: #333;
+    color: variables.$text-color;
+}
+
+.header,
+.btn-primary {
+    background-color: variables.$primary-color !important;
+}
+
+.btn_secondary-hover,
+.btn-primary {
+    &:hover {
+        background-color: variables.$secondary-color !important;
+        font-weight: bolder;
+    }
 }

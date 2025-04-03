@@ -29,6 +29,7 @@ const Layout = () => {
                         flex: 1,
                         mt: 10,
                     }}
+                    maxWidth={false}
                 >
                     <Outlet />
                 </Container>

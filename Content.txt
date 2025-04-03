@@ -1,0 +1,98 @@
+Trang web đấu giá trực tuyến này cần có các thành phần và chức năng chính sau:
+
+1. Người dùng & Phân quyền
+Người dùng thông thường: Đăng ký, đăng nhập, bán và mua sản phẩm.
+
+Quản trị viên: Quản lý danh mục, kiểm soát người dùng gian lận.
+
+2. Trang chủ
+Thanh tìm kiếm sản phẩm.
+
+Danh sách danh mục sản phẩm kèm số lượng sản phẩm đang đấu giá.
+
+Liên kết "Bán một mặt hàng".
+
+3. Chức năng chính
+Tìm kiếm sản phẩm
+Tìm kiếm không phân biệt chữ hoa, chữ thường.
+
+Hiển thị danh sách các sản phẩm phù hợp.
+
+Bán hàng
+Nhập thông tin sản phẩm: tên, mô tả, hình ảnh, tài liệu mô tả, giá khởi điểm, ngày kết thúc, mức tăng giá.
+
+Duyệt danh mục
+Hiển thị các sản phẩm trong từng danh mục.
+
+Mua hàng (Trang chi tiết sản phẩm)
+Thông tin sản phẩm: tên, mô tả, ảnh, tài liệu, giá khởi điểm, giá hiện tại.
+
+Tên người bán kèm liên kết xem đánh giá.
+
+Xem lịch sử đấu giá.
+
+Đặt giá thầu (chỉ người mua, không phải người bán).
+
+Chỉnh sửa sản phẩm (dành cho người bán)
+Cập nhật ảnh, tài liệu, mức tăng giá.
+
+Thông báo
+Khi đấu giá kết thúc, người mua & người bán nhận được thông báo.
+
+Hệ thống đánh giá (Tùy chọn)
+Người bán có thể đánh giá người mua từ -5 đến +5 điểm.
+
+Chức năng Quản trị viên
+Quản lý danh mục sản phẩm (thêm, gộp danh mục).
+
+Chặn người dùng gian lận.
+
+4. Cơ sở dữ liệu (Database)
+Bảng Item: Lưu thông tin sản phẩm (tên, mô tả, giá, ngày đấu giá, danh mục, v.v.).
+
+Bảng User: Lưu thông tin người dùng (tên, mật khẩu, danh sách sản phẩm đã bán).
+
+👉 Tóm lại: Trang web cần có tính năng đăng nhập, tìm kiếm, mua/bán sản phẩm, quản lý danh mục, đặt giá thầu, thông báo và hệ thống đánh giá người dùng.
+
+Chặn người dùng gian lận trong hệ thống đấu giá
+Chức năng này dành cho quản trị viên để ngăn chặn các hành vi không trung thực ảnh hưởng đến hệ thống đấu giá. Cụ thể, quản trị viên có thể chặn (block) hoặc hạn chế quyền truy cập của người dùng vi phạm.
+
+1. Các hành vi gian lận có thể bị chặn
+🔹 Đấu giá ảo (Shill Bidding)
+Một người dùng tạo nhiều tài khoản để đặt giá thầu giả nhằm nâng giá sản phẩm.
+
+Người bán tự đặt giá thầu để tăng giá trị mặt hàng của mình.
+
+🔹 Không hoàn thành giao dịch
+Người mua thắng đấu giá nhưng không thanh toán.
+
+Người bán không giao hàng sau khi đấu giá kết thúc.
+
+🔹 Đánh giá sai sự thật
+Người dùng cố tình đánh giá thấp hoặc cao để gây ảnh hưởng đến uy tín của người khác.
+
+🔹 Sử dụng bot hoặc script tự động
+Một số người có thể sử dụng bot để liên tục đặt giá thầu nhằm giành chiến thắng.
+
+2. Cách quản trị viên chặn người dùng gian lận
+Xem báo cáo từ người dùng khác: Khi có nhiều người khiếu nại về một tài khoản.
+
+Kiểm tra lịch sử đấu giá: Phát hiện các mẫu đặt giá bất thường (như một tài khoản liên tục đặt giá cao nhưng không thanh toán).
+
+Xem đánh giá của người dùng: Nếu một người có nhiều đánh giá tiêu cực, có thể xem xét chặn.
+
+🔸 Hình thức xử lý
+Cảnh báo: Gửi email hoặc thông báo nhắc nhở người dùng.
+
+Hạn chế tài khoản: Tạm thời cấm đặt giá thầu hoặc bán hàng trong một khoảng thời gian.
+
+Chặn vĩnh viễn: Nếu vi phạm nghiêm trọng, quản trị viên có thể vô hiệu hóa tài khoản.
+
+3. Cách thực hiện trong hệ thống
+Bảng User trong cơ sở dữ liệu có thể có cột status (active, restricted, banned).
+
+Giao diện quản trị viên để tìm kiếm, kiểm tra và chặn tài khoản gian lận.
+
+Thông báo cho người dùng khi tài khoản bị chặn hoặc hạn chế.
+
+👉 Tóm lại: Hệ thống cần có cơ chế phát hiện và xử lý người dùng gian lận để đảm bảo công bằng cho tất cả người tham gia đấu giá.

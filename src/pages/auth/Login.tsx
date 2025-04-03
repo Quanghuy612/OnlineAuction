@@ -26,7 +26,7 @@ function Login() {
                     </Typography>
                     <TextField fullWidth label="Email" variant="outlined" margin="normal" />
                     <TextField fullWidth label="Password" type="password" variant="outlined" margin="normal" />
-                    <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+                    <Button variant="contained" className="btn-primary" fullWidth sx={{ mt: 2 }}>
                         Login
                     </Button>
 

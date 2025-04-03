@@ -129,7 +129,7 @@ const SignUp = () => {
                                 Login
                             </Link>
                         </Typography>
-                        <Button variant="contained" color="primary" fullWidth sx={{ mt: 2 }} type="submit">
+                        <Button variant="contained" className="btn-primary" fullWidth sx={{ mt: 2 }} type="submit">
                             Sign Up
                         </Button>
                     </form>
