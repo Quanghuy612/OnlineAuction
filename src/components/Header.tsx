@@ -1,32 +1,10 @@
-import { AppBar, Toolbar, Typography, IconButton, Box, Button } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
-interface HeaderProps {
-    isStatic: boolean;
-    onToggle: () => void;
-}
-
-const drawerWidth = 240;
-
-const Header: React.FC<HeaderProps> = ({ isStatic, onToggle }) => {
+const Header = () => {
     return (
-        <AppBar
-            position="fixed"
-            sx={{
-                width: isStatic ? `calc(100% - ${drawerWidth}px)` : "100%",
-                ml: isStatic ? `${drawerWidth}px` : 0,
-                transition: "margin 0.3s ease-in-out, width 0.3s ease-in-out",
-                zIndex: 9,
-            }}
-            className="header"
-        >
+        <AppBar className="header">
             <Toolbar>
-                {!isStatic && (
-                    <IconButton edge="start" color="inherit" onClick={onToggle} sx={{ mr: 2 }}>
-                        <MenuIcon />
-                    </IconButton>
-                )}
                 <Typography variant="h6" sx={{ flexGrow: 1 }}>
                     My App
                 </Typography>

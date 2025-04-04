@@ -18,9 +18,14 @@ body {
 }
 
 .btn_secondary-hover,
-.btn-primary {
+.btn-primary,
+.btn-outline-primary {
     &:hover {
         background-color: variables.$secondary-color !important;
         font-weight: bolder;
     }
+}
+
+.btn-secondary {
+    background-color: variables.$secondary-color !important;
 }

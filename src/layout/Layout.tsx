@@ -1,40 +1,29 @@
-import { Outlet } from "react-router-dom";
-import { useState } from "react";
 import { Box, Container } from "@mui/material";
 import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-
-const drawerWidth = 240;
+import Filter from "../components/Filter";
+import { Outlet } from "react-router-dom";
+import SortBar from "../components/SortBar";
+import BreadCrumb from "../components/BreadCrumb";
 
 const Layout = () => {
-    const [isStatic, setIsStatic] = useState(false);
-    const [open, setOpen] = useState(false);
-
     return (
-        <Box sx={{ display: "flex", minHeight: "100vh" }}>
-            <Sidebar open={open} isStatic={isStatic} onClose={() => setOpen(false)} onToggleStatic={setIsStatic} />
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    flexGrow: 1,
-                    ml: isStatic ? `${drawerWidth}px` : 0,
-                    transition: "margin 0.3s ease-in-out",
-                }}
-            >
-                <Header isStatic={isStatic} onToggle={() => setOpen(true)} />
-                <Container
-                    sx={{
-                        flex: 1,
-                        mt: 10,
-                    }}
-                    maxWidth={false}
-                >
-                    <Outlet />
-                </Container>
-                <Footer />
-            </Box>
+        <Box sx={{ display: "flex", minHeight: "100vh", flexDirection: "column" }}>
+            <Header />
+            <Container maxWidth={false} sx={{ px: 3, mt: 8 }}>
+                <BreadCrumb />
+                <Box sx={{ display: "flex" }}>
+                    <Box sx={{ width: 250, pr: 2 }}>
+                        <Filter />
+                    </Box>
+
+                    <Box sx={{ flex: 1 }}>
+                        <SortBar />
+                        <Outlet />
+                    </Box>
+                </Box>
+            </Container>
+            <Footer />
         </Box>
     );
 };
