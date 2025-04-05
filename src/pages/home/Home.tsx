@@ -1,6 +1,7 @@
 import { Box, Grid, Card, CardContent, CardMedia, Typography, Button } from "@mui/material";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useSort } from "../../hooks/useSort";
 
 const auctionItems = [
     { id: 1, title: "Vintage Painting", description: "A beautiful vintage painting.", image: "/images/painting.jpg", price: 100 },
@@ -11,13 +12,12 @@ const auctionItems = [
 ];
 
 function Home() {
-    const [filterText, setFilterText] = useState("");
-
-    const filteredItems = auctionItems.filter((item) => item.title.toLowerCase().includes(filterText.toLowerCase()));
+    const [filteredItems, setFilteredItems] = useState(auctionItems);
+    const { isGridView } = useSort();
 
     return (
         <Box>
-            <Grid container spacing={2}>
+            <Grid container spacing={3}>
                 {filteredItems.length === 0 ? (
                     <Grid size="auto">
                         <Typography variant="h6" color="text.secondary" textAlign="center">
@@ -26,10 +26,10 @@ function Home() {
                     </Grid>
                 ) : (
                     filteredItems.map((item) => (
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+                        <Grid size={{ xs: 12, sm: isGridView ? 6 : 12, md: isGridView ? 4 : 12 }}>
+                            <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
                                 <Card sx={{ boxShadow: 3 }}>
-                                    <CardMedia component="img" height="200" image={item.image} alt={item.title} />
+                                    <CardMedia component="img" height="180" image={item.image} alt={item.title} />
                                     <CardContent>
                                         <Typography variant="h6">{item.title}</Typography>
                                         <Typography variant="body2" color="text.secondary">

@@ -23,14 +23,14 @@ const BreadCrumb = () => {
             transition={{ duration: 0.5, ease: "easeOut" }}
         >
             <Breadcrumbs aria-label="breadcrumb" separator={<ChevronRight fontSize="small" />} sx={{ mt: 2, mb: 2 }}>
-                <StyledLink to="/">
+                <StyledLink className="text-primary" to="/">
                     <Home fontSize="small" sx={{ mr: 0.5 }} />
                     <b>Home</b>
                 </StyledLink>
                 {pathnames.map((value, index) => {
                     const to = `/${pathnames.slice(0, index + 1).join("/")}`;
                     return (
-                        <Typography key={to} color="text.primary">
+                        <Typography key={to}>
                             <StyledLink to={to}>{value.charAt(0).toUpperCase() + value.slice(1)}</StyledLink>
                         </Typography>
                     );

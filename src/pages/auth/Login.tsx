@@ -9,11 +9,10 @@ function Login() {
                 initial={{ opacity: 0, y: -50 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -50 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
             >
                 <Box
                     sx={{
-                        mt: 5,
                         p: 3,
                         boxShadow: 3,
                         borderRadius: 2,

@@ -1,12 +1,13 @@
 import { Box, FormControl, InputLabel, Select, MenuItem, Grid, TextField, InputAdornment, SelectChangeEvent, Button } from "@mui/material";
 import { useState } from "react";
-import { Search, ViewModule, ViewList } from "@mui/icons-material"; // Icons for grid & list view
+import { Search, ViewModule, ViewList } from "@mui/icons-material";
+import { useSort } from "../hooks/useSort";
 
-const SortBar = () => {
+const SortBar: React.FC<{ mdBreak: boolean }> = ({ mdBreak }) => {
     const [sortOption, setSortOption] = useState<string>("");
     const [sortOrder, setSortOrder] = useState<string>("");
     const [searchQuery, setSearchQuery] = useState("");
-    const [isGridView, setIsGridView] = useState<boolean>(true); // Toggle state
+    const { isGridView, toggleView } = useSort();
 
     const handleSortOptionChange = (event: SelectChangeEvent<string>) => {
         setSortOption(event.target.value);
@@ -20,37 +21,30 @@ const SortBar = () => {
         setSearchQuery(event.target.value);
     };
 
-    const toggleView = () => {
-        setIsGridView((prev) => !prev); // Toggle state
-    };
-
     return (
-        <Box sx={{ mt: 2, mb: 2, bgcolor: "white", padding: 2, boxShadow: 1 }}>
+        <Box sx={{ mb: 2, bgcolor: "white", padding: 2, boxShadow: 1 }}>
             <Grid container spacing={2} alignItems="center">
-                <Grid item container spacing={2} alignItems="center" xs>
-                    {/* Search Box */}
-                    <Grid item xs>
-                        <TextField
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                            label="Search"
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            slotProps={{
-                                input: {
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Search />
-                                        </InputAdornment>
-                                    ),
-                                },
-                            }}
-                        />
-                    </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <TextField
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        label="Search"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search />
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                    />
                 </Grid>
-                {/* Sort By Dropdown */}
-                <Grid item>
+
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <FormControl fullWidth size="small">
                         <InputLabel>Sort By</InputLabel>
                         <Select value={sortOption} onChange={handleSortOptionChange} label="Sort By" sx={{ minWidth: 200 }}>
@@ -61,8 +55,7 @@ const SortBar = () => {
                     </FormControl>
                 </Grid>
 
-                {/* Order Dropdown */}
-                <Grid item>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <FormControl fullWidth size="small">
                         <InputLabel>Order</InputLabel>
                         <Select value={sortOrder} onChange={handleSortOrderChange} label="Order" sx={{ minWidth: 200 }}>
@@ -72,20 +65,21 @@ const SortBar = () => {
                     </FormControl>
                 </Grid>
 
-                {/* Toggle Grid/List View Button (Right-aligned) */}
-                <Grid item sx={{ marginLeft: "auto" }}>
-                    <Button
-                        onClick={toggleView}
-                        sx={{
-                            minWidth: "0px",
-                            padding: "8px",
-                            color: "white",
-                        }}
-                        className="btn-secondary"
-                    >
-                        {isGridView ? <ViewModule fontSize="small" /> : <ViewList fontSize="small" />}
-                    </Button>
-                </Grid>
+                {!mdBreak && (
+                    <Grid size={{ xs: 12, sm: 6, md: 2 }} sx={{ textAlign: "end" }}>
+                        <Button
+                            onClick={toggleView}
+                            sx={{
+                                minWidth: "0px",
+                                padding: "8px",
+                                color: "white",
+                            }}
+                            className="btn-primary"
+                        >
+                            {isGridView ? <ViewModule fontSize="small" /> : <ViewList fontSize="small" />}
+                        </Button>
+                    </Grid>
+                )}
             </Grid>
         </Box>
     );

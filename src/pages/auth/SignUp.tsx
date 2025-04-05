@@ -39,11 +39,10 @@ const SignUp = () => {
     };
 
     return (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}>
             <Container maxWidth="sm">
                 <Box
                     sx={{
-                        mt: 5,
                         p: 3,
                         boxShadow: 3,
                         borderRadius: 2,
