@@ -13,8 +13,6 @@ const schema = yup.object().shape({
     Username: yup.string().required("Username is required"),
     Email: yup.string().email("Invalid email address").required("Email is required"),
     Password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
-    Role: yup.string().required("Role is required"),
-    Description: yup.string().required("Description is required"),
 });
 
 const SignUp = () => {
@@ -101,26 +99,6 @@ const SignUp = () => {
                                     ),
                                 },
                             }}
-                        />
-                        <TextField
-                            fullWidth
-                            label="Role"
-                            variant="outlined"
-                            margin="normal"
-                            {...register("Role")}
-                            error={!!errors.Role}
-                            helperText={errors.Role?.message}
-                        />
-                        <TextField
-                            fullWidth
-                            label="Description"
-                            variant="outlined"
-                            margin="normal"
-                            {...register("Description")}
-                            error={!!errors.Description}
-                            helperText={errors.Description?.message}
-                            multiline
-                            rows={3}
                         />
                         <Typography variant="body2" sx={{ mt: 2 }}>
                             Already have an account?{" "}

@@ -4,7 +4,7 @@ import { Cookies } from "react-cookie";
 const cookies = new Cookies();
 
 const API = axios.create({
-    baseURL: "https://api.example.com/v1",
+    baseURL: "https://localhost:5001/api/v1/",
     headers: {
         "Content-Type": "application/json",
     },
@@ -15,7 +15,7 @@ API.interceptors.request.use(
     (config) => {
         const token = cookies.get("token");
 
-        const noAuthRoutes = ["/login", "/signup"];
+        const noAuthRoutes = ["auth/login", "auth/signup"];
 
         if (noAuthRoutes.some((route) => config.url?.includes(route))) {
             config.withCredentials = false;

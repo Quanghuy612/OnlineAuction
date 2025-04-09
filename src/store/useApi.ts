@@ -3,7 +3,7 @@ import API from "../api/api";
 import { AxiosError } from "axios";
 
 interface ApiState<T = unknown> {
-    data: T[];
+    data: T | T[] | null;
     total: number;
     loading: boolean;
     error: string | null;
@@ -11,8 +11,9 @@ interface ApiState<T = unknown> {
     apiCall: (method: "GET" | "POST" | "PUT" | "DELETE", endpoint: string, params?: Record<string, unknown>, body?: unknown) => Promise<void>;
 }
 
+// 👇 Define the store factory (not inside a generic function!)
 export const useApi = create<ApiState>((set) => ({
-    data: [],
+    data: null,
     total: 0,
     loading: false,
     error: null,
@@ -29,8 +30,10 @@ export const useApi = create<ApiState>((set) => ({
                 data: method !== "GET" ? body : undefined,
             });
 
+            const responseData = method === "GET" ? response.data.results || response.data : response.data.data || response.data || null;
+
             set({
-                data: method === "GET" ? response.data.results || response.data : [],
+                data: responseData,
                 total: method === "GET" ? response.data.total || 0 : 0,
                 success: response.data.message || response.data.meta?.message || (response.data.success ? "Operation successful!" : ""),
                 loading: false,

@@ -1,7 +1,10 @@
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
+    const { user, logout } = useAuth();
+
     return (
         <AppBar className="header">
             <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -30,18 +33,27 @@ const Header = () => {
                     </NavLink>
                 </Box>
 
-                <Box sx={{ display: "flex", gap: 1 }}>
-                    <NavLink to="/login">
-                        <Button sx={{ color: "white" }} className="btn_secondary-hover">
-                            Login
+                {user ? (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                        <Typography sx={{ color: "white" }}>{user}</Typography>
+                        <Button onClick={logout} sx={{ color: "white" }} className="btn_secondary-hover">
+                            Logout
                         </Button>
-                    </NavLink>
-                    <NavLink to="/signup">
-                        <Button sx={{ color: "white" }} className="btn_secondary-hover">
-                            Sign Up
-                        </Button>
-                    </NavLink>
-                </Box>
+                    </Box>
+                ) : (
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                        <NavLink to="/login">
+                            <Button sx={{ color: "white" }} className="btn_secondary-hover">
+                                Login
+                            </Button>
+                        </NavLink>
+                        <NavLink to="/signup">
+                            <Button sx={{ color: "white" }} className="btn_secondary-hover">
+                                Sign Up
+                            </Button>
+                        </NavLink>
+                    </Box>
+                )}
             </Toolbar>
         </AppBar>
     );
