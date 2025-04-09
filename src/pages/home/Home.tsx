@@ -26,7 +26,7 @@ function Home() {
                     </Grid>
                 ) : (
                     filteredItems.map((item) => (
-                        <Grid size={{ xs: 12, sm: isGridView ? 6 : 12, md: isGridView ? 4 : 12 }}>
+                        <Grid key={item.id} size={{ xs: 12, sm: isGridView ? 6 : 12, md: isGridView ? 4 : 12 }}>
                             <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.6 }}>
                                 <Card sx={{ boxShadow: 3 }}>
                                     <CardMedia component="img" height="180" image={item.image} alt={item.title} />

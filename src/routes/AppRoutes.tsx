@@ -4,7 +4,7 @@ import Home from "../pages/home/Home";
 import Login from "../pages/auth/Login";
 import SignUp from "../pages/auth/SignUp";
 import Error from "../pages/error/Error";
-//import ProtectedRoutes from "../components/ProtectedRoutes";
+import ProtectedRoutes from "../components/ProtectedRoutes";
 import AuctionLayout from "../layout/AuctionLayout";
 import AuthLayout from "../layout/AuthLayout";
 
@@ -13,10 +13,9 @@ const AppRoutes = () => {
         <Routes>
             <Route path="/" element={<MainLayout />}>
                 <Route path="/" element={<AuctionLayout />}>
-                    {/* <Route element={<ProtectedRoutes />}>
+                    <Route element={<ProtectedRoutes />}>
                         <Route index element={<Home />} />
-                    </Route> */}
-                    <Route index element={<Home />} />
+                    </Route>
                 </Route>
                 <Route path="/" element={<AuthLayout />}>
                     <Route path="login" element={<Login />} />
