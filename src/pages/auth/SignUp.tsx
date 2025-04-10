@@ -4,20 +4,23 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useForm, SubmitHandler } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import User from "../../types/User";
+import SignupRequest from "../../types/SignupRequest";
 import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
+import { useApi } from "../../store/useApi";
 
 const schema = yup.object().shape({
     Fullname: yup.string().required("Full Name is required"),
     Username: yup.string().required("Username is required"),
     Email: yup.string().email("Invalid email address").required("Email is required"),
     Password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+    PhoneNumber: yup.string().optional(),
 });
 
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const { apiCall } = useApi();
 
     const handleClickShowPassword = () => {
         setShowPassword((prev) => !prev);
@@ -27,13 +30,15 @@ const SignUp = () => {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<User>({
+    } = useForm<SignupRequest>({
         resolver: yupResolver(schema),
     });
 
-    const onSubmit: SubmitHandler<User> = (data) => {
-        console.log("Form Submitted:", data);
-        navigate("/login");
+    const onSubmit: SubmitHandler<SignupRequest> = async (SignupData) => {
+        const result = await apiCall("POST", "/auth/signup", undefined, SignupData);
+        if (result.success) {
+            navigate("/login");
+        }
     };
 
     return (
@@ -79,6 +84,7 @@ const SignUp = () => {
                             error={!!errors.Email}
                             helperText={errors.Email?.message}
                         />
+                        <TextField fullWidth label="Phone number" variant="outlined" margin="normal" {...register("PhoneNumber")} />
                         <TextField
                             fullWidth
                             label="Password"

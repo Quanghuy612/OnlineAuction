@@ -14,7 +14,7 @@ const schema = Yup.object({
 });
 
 function Login() {
-    const { data, apiCall, success, error } = useApi();
+    const { apiCall } = useApi();
     const { login } = useAuth();
 
     const {
@@ -25,14 +25,11 @@ function Login() {
         resolver: yupResolver(schema),
     });
 
-    const onSubmit = (loginData: LoginRequest) => {
-        apiCall("POST", "/auth/login", undefined, loginData);
-        if (success) {
-            const { token } = data as { token: string };
+    const onSubmit = async (loginData: LoginRequest) => {
+        const result = await apiCall("POST", "/auth/login", undefined, loginData);
+        if (result.success && result.data) {
+            const { token } = result.data as { token: string };
             login(token);
-        }
-        if (error) {
-            console.error("Login failed:", error);
         }
     };
 
