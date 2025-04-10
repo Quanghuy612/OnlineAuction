@@ -13,9 +13,9 @@ const AppRoutes = () => {
         <Routes>
             <Route path="/" element={<MainLayout />}>
                 <Route path="/" element={<AuctionLayout />}>
-                    <Route element={<ProtectedRoutes />}>
-                        <Route index element={<Home />} />
-                    </Route>
+                    <Route element={<ProtectedRoutes />}></Route>
+
+                    <Route index element={<Home />} />
                 </Route>
                 <Route path="/" element={<AuthLayout />}>
                     <Route path="login" element={<Login />} />
