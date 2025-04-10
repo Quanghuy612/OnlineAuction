@@ -79,7 +79,7 @@ function Login() {
                             helperText={errors.Password?.message}
                         />
 
-                        <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+                        <Button type="submit" variant="contained" className="btn btn-primary" fullWidth sx={{ mt: 2 }}>
                             Login
                         </Button>
                     </form>

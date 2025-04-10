@@ -6,7 +6,7 @@ import { FilterList } from "@mui/icons-material";
 import { motion } from "framer-motion";
 
 const Filter: React.FC<{ mdBreak: boolean }> = ({ mdBreak }) => {
-    const [priceRange, setPriceRange] = useState([30, 3400]);
+    const [priceRange, setPriceRange] = useState([30, 5000]);
     const [categories, setCategories] = useState<Record<string, boolean>>({
         presale: false,
         newArrivals: false,
