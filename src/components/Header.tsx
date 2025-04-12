@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
-    const { user, logout } = useAuth();
-
+    const { id, user, role, logout } = useAuth();
+    console.log(role);
     return (
         <AppBar className="header">
             <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -16,21 +16,23 @@ const Header = () => {
                 </NavLink>
 
                 <Box sx={{ display: "flex", gap: 3 }}>
-                    <NavLink to="/auction">
+                    <NavLink to={`/user/auctions/${id}`}>
                         <Button sx={{ color: "white" }} className="btn_secondary-hover">
                             My Auction
                         </Button>
                     </NavLink>
-                    <NavLink to="/news">
+                    <NavLink to={`/user/products/${id}`}>
                         <Button sx={{ color: "white" }} className="btn_secondary-hover">
-                            News
+                            My Products
                         </Button>
                     </NavLink>
-                    <NavLink to="/browse">
-                        <Button sx={{ color: "white" }} className="btn_secondary-hover">
-                            Browse
-                        </Button>
-                    </NavLink>
+                    {role === "Admin" && (
+                        <NavLink to="/admin">
+                            <Button sx={{ color: "white" }} className="btn_secondary-hover btn-fifth">
+                                Admin Page
+                            </Button>
+                        </NavLink>
+                    )}
                 </Box>
 
                 {user ? (

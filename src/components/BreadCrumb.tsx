@@ -31,7 +31,9 @@ const BreadCrumb = () => {
                     const to = `/${pathnames.slice(0, index + 1).join("/")}`;
                     return (
                         <Typography key={to}>
-                            <StyledLink to={to}>{value.charAt(0).toUpperCase() + value.slice(1)}</StyledLink>
+                            <Typography className="text-primary" sx={{ cursor: "default" }}>
+                                {value.charAt(0).toUpperCase() + value.slice(1)}
+                            </Typography>
                         </Typography>
                     );
                 })}

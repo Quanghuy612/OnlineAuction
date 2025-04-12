@@ -5,12 +5,12 @@ import { useApi } from "../store/useApi";
 
 export const NotifyProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [open, setOpen] = useState(false);
-    const [message, setMessage] = useState("");
+    const [msg, setMsg] = useState("");
     const [severity, setSeverity] = useState<"success" | "error" | "warning" | "info">("success");
-    const { error, success } = useApi();
+    const { success, message } = useApi();
 
     const showNotify = (msg: string, type: "success" | "error" | "warning" | "info" = "success") => {
-        setMessage(msg);
+        setMsg(msg);
         setSeverity(type);
         setOpen(true);
     };
@@ -20,21 +20,16 @@ export const NotifyProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     };
 
     useEffect(() => {
-        if (error) {
-            showNotify(error, "error");
+        if (message) {
+            const safeMessage = message ?? (success ? "Operation successful." : "Something went wrong.");
+            showNotify(safeMessage, success ? "success" : "error");
         }
-    }, [error]);
-
-    useEffect(() => {
-        if (success) {
-            showNotify(success, "success");
-        }
-    }, [success]);
+    }, [success, message]);
 
     return (
         <NotifyContext.Provider value={{ showNotify }}>
             {children}
-            <Notify open={open} message={message} severity={severity} onClose={handleClose} />
+            <Notify open={open} message={msg} severity={severity} onClose={handleClose} />
         </NotifyContext.Provider>
     );
 };
