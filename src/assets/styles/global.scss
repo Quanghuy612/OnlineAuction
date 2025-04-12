@@ -11,7 +11,7 @@ body {
     height: 100%;
     width: 100%;
     margin: 0px;
-    background: linear-gradient(90deg, rgb(144, 146, 150) 23%, rgb(192, 192, 192) 100%);
+    background: linear-gradient(90deg, rgb(207, 170, 128) 23%, rgb(231, 146, 97) 100%);
     font-family: variables.$font-primary;
 }
 
@@ -26,6 +26,7 @@ body {
 
 .btn_secondary-hover,
 .btn-primary,
+.btn-fifth,
 .btn-outline-primary {
     &:hover {
         background-color: variables.$secondary-color !important;
@@ -36,6 +37,10 @@ body {
 .btn-secondary {
     color: white !important;
     background-color: variables.$secondary-color !important;
+}
+
+.text-main {
+    color: variables.$primary-color;
 }
 
 .text-primary {
