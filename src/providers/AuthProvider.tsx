@@ -6,11 +6,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     interface UserPayload {
+        userId: string;
         username: string;
-        role: string;
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
     }
 
     const [cookies, setCookie, removeCookie] = useCookies(["token"]);
+    const [id, setId] = useState<number | null>(null);
     const [user, setUser] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
     const [token, setToken] = useState<string | null>(null);
@@ -22,16 +24,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (cookies.token) {
             try {
                 const decoded = jwtDecode<UserPayload>(cookies.token);
+                setId(parseInt(decoded.userId));
                 setUser(decoded.username);
-                setRole(decoded.role);
+                setRole(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
                 setToken(cookies.token);
             } catch (err) {
                 console.error("Invalid token:", err);
+                setId(null);
                 setUser(null);
                 setToken(null);
-                removeCookie("token");
             }
         } else {
+            setId(null);
             setUser(null);
             setToken(null);
         }
@@ -51,5 +55,5 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         navigate("/login");
     };
 
-    return <AuthContext.Provider value={{ user, role, token, login, logout }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ id, user, role, token, login, logout }}>{children}</AuthContext.Provider>;
 };

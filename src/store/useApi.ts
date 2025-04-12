@@ -3,11 +3,11 @@ import API from "../api/api";
 import { AxiosError } from "axios";
 
 interface ApiState<T = unknown> {
-    data: T | T[] | null;
+    data: T | null;
     total: number;
     loading: boolean;
-    error: string | null;
-    success: string | null;
+    success: boolean;
+    message: string | null;
     apiCall: (
         method: "GET" | "POST" | "PUT" | "DELETE",
         endpoint: string,
@@ -15,9 +15,9 @@ interface ApiState<T = unknown> {
         body?: unknown
     ) => Promise<{
         success: boolean;
-        data?: unknown;
-        error?: string;
-        message?: string;
+        message: string;
+        data: T | null;
+        total?: number;
     }>;
 }
 
@@ -25,11 +25,11 @@ export const useApi = create<ApiState>((set) => ({
     data: null,
     total: 0,
     loading: false,
-    error: null,
-    success: null,
+    success: false,
+    message: null,
 
     apiCall: async (method, endpoint, params, body) => {
-        set({ loading: true, error: null, success: null });
+        set({ loading: true, message: null, success: false });
 
         try {
             const response = await API({
@@ -39,21 +39,21 @@ export const useApi = create<ApiState>((set) => ({
                 data: method !== "GET" ? body : undefined,
             });
 
-            const responseData = method === "GET" ? response.data.results || response.data : response.data.data || response.data || null;
-
-            const message = response.data.message || response.data.meta?.message || (response.data.success ? "Operation successful!" : "");
+            const { success, message, data, total } = response.data;
 
             set({
-                data: responseData,
-                total: method === "GET" ? response.data.total || 0 : 0,
-                success: message,
+                data: data || null,
+                total: total || 0,
+                success: success ?? false,
+                message: message || "",
                 loading: false,
             });
 
             return {
-                success: true,
-                data: responseData,
+                success,
                 message,
+                data: data || null,
+                total,
             };
         } catch (error: unknown) {
             let errorMessage = "An unknown error occurred";
@@ -63,13 +63,15 @@ export const useApi = create<ApiState>((set) => ({
             }
 
             set({
-                error: errorMessage,
                 loading: false,
+                success: false,
+                message: errorMessage,
             });
 
             return {
                 success: false,
-                error: errorMessage,
+                message: errorMessage,
+                data: null,
             };
         }
     },

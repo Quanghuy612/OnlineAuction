@@ -1,6 +1,7 @@
 import { createContext } from "react";
 
 interface AuthContextType {
+    id: number | null;
     user: string | null;
     token: string | null;
     role: string | null;

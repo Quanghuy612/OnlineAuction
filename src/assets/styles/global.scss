@@ -11,13 +11,17 @@ body {
     height: 100%;
     width: 100%;
     margin: 0px;
-    background: linear-gradient(90deg, rgb(144, 146, 150) 23%, rgb(92, 92, 92) 100%);
+    background: linear-gradient(90deg, rgb(144, 146, 150) 23%, rgb(192, 192, 192) 100%);
     font-family: variables.$font-primary;
 }
 
 .header,
 .btn-primary {
     background-color: variables.$primary-color !important;
+}
+
+.btn-fifth {
+    background-color: variables.$fifth-color !important;
 }
 
 .btn_secondary-hover,
@@ -35,9 +39,9 @@ body {
 }
 
 .text-primary {
-    color: variables.$primary-color;
+    color: white;
     &:hover {
-        color: white;
+        color: variables.$primary-color;
         font-weight: bolder;
     }
 }
