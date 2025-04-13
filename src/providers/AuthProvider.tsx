@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
     }
 
-    const [cookies, setCookie, removeCookie] = useCookies(["token"]);
+    const [cookies, setCookie, removeCookie] = useCookies(["token", "refreshToken"]);
     const [id, setId] = useState<number | null>(null);
     const [user, setUser] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);
@@ -41,9 +41,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, [cookies.token]);
 
-    const login = (token: string) => {
+    const login = (token: string, refreshToken: string) => {
         setCookie("token", token, { path: "/", sameSite: "strict" });
-
+        setCookie("refreshToken", refreshToken, { path: "/", sameSite: "strict" });
         setTimeout(() => {
             const from = location.state?.from?.pathname || "/";
             navigate(from, { replace: true });
@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const logout = () => {
         removeCookie("token");
+        removeCookie("refreshToken");
         navigate("/login");
     };
 

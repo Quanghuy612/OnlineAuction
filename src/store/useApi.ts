@@ -8,7 +8,7 @@ interface ApiState<T = unknown> {
     loading: boolean;
     success: boolean;
     message: string | null;
-    apiCall: (
+    apiCall: <T = unknown>(
         method: "GET" | "POST" | "PUT" | "DELETE",
         endpoint: string,
         params?: Record<string, unknown>,
@@ -27,8 +27,17 @@ export const useApi = create<ApiState>((set) => ({
     loading: false,
     success: false,
     message: null,
-
-    apiCall: async (method, endpoint, params, body) => {
+    apiCall: async <T = unknown>(
+        method: "GET" | "POST" | "PUT" | "DELETE",
+        endpoint: string,
+        params?: Record<string, unknown>,
+        body?: unknown
+    ): Promise<{
+        success: boolean;
+        message: string;
+        data: T | null;
+        total?: number;
+    }> => {
         set({ loading: true, message: null, success: false });
 
         try {
@@ -52,7 +61,7 @@ export const useApi = create<ApiState>((set) => ({
             return {
                 success,
                 message,
-                data: data || null,
+                data: (data as T) ?? null,
                 total,
             };
         } catch (error: unknown) {

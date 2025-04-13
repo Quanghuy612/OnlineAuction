@@ -29,7 +29,8 @@ function Login() {
         const result = await apiCall("POST", "/auth/login", undefined, loginData);
         if (result.success && result.data) {
             const { token } = result.data as { token: string };
-            login(token);
+            const { refreshToken } = result.data as { refreshToken: string };
+            login(token, refreshToken);
         }
     };
 
