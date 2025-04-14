@@ -5,7 +5,7 @@ interface AuthContextType {
     user: string | null;
     token: string | null;
     role: string | null;
-    login: (token: string) => void;
+    login: (token: string, refreshToken: string) => void;
     logout: () => void;
 }
 

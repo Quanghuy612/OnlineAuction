@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 
 export interface AuctionResponse {
-    Id: string;
+    Id: number;
     Name: string;
     StartTime: DateTime;
     EndTime: DateTime;
