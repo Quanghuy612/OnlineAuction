@@ -2,7 +2,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, Typography, Grid, Paper, Box, TextField, Modal, InputLabel, MenuItem } from "@mui/material";
 import { AuctionResponse } from "../../types/AuctionResponse";
-import { formatImage } from "../../utils/formatImage";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import React from "react";
@@ -12,10 +11,12 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import { debounce } from "lodash";
+import { useNavigate } from "react-router-dom";
 
 interface AddAuctionModalProps {
     open: boolean;
     onClose: () => void;
+    reLoad: () => void;
 }
 
 interface Product {
@@ -47,7 +48,7 @@ const CustomBackdrop = () => (
     />
 );
 
-const AddAuctionModal: React.FC<AddAuctionModalProps> = ({ open, onClose }) => {
+const AddAuctionModal: React.FC<AddAuctionModalProps> = ({ open, onClose, reLoad }) => {
     const [form, setForm] = useState<FormState>({
         name: "",
         startingPrice: "",
@@ -108,6 +109,7 @@ const AddAuctionModal: React.FC<AddAuctionModalProps> = ({ open, onClose }) => {
                 productId: 0,
                 productName: "",
             });
+            reLoad();
         }
     };
 
@@ -124,7 +126,7 @@ const AddAuctionModal: React.FC<AddAuctionModalProps> = ({ open, onClose }) => {
                 <Box
                     sx={{
                         position: "absolute" as const,
-                        top: "0%",
+                        top: "40%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
                         width: 500,
@@ -248,15 +250,22 @@ const UserAuctions = () => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const navigate = useNavigate();
 
     const loadData = async () => {
         const result = await apiCall<AuctionResponse[]>("GET", "/user/auctions", undefined, undefined);
         setAuctions(result.data ?? []);
     };
-
     useEffect(() => {
         loadData();
     }, []);
+
+    const startAuction = async (Id: number) => {
+        const result = await apiCall("PUT", `/user/toggle-auction/${Id}`, undefined, "Started");
+        if (result.success) {
+            navigate(`/live-auction/${Id}`);
+        }
+    };
 
     return (
         <>
@@ -272,12 +281,12 @@ const UserAuctions = () => {
                 <Paper key={auction.Id} sx={{ padding: 2, marginBottom: 2, marginTop: 2 }}>
                     <Grid container spacing={2}>
                         <Grid size={3}>
-                            <Box
+                            {/* <Box
                                 component="img"
                                 src={formatImage(auction.ProductImage)}
                                 alt={auction.ProductName}
                                 sx={{ width: "100%", height: "300px" }}
-                            />
+                            /> */}
                         </Grid>
                         <Grid size={7}>
                             <Typography variant="h6">{auction.ProductName}</Typography>
@@ -290,12 +299,25 @@ const UserAuctions = () => {
                                 Status: {auction.Status}
                             </Typography>
                             {auction.Status === "Started" && (
-                                <Button variant="contained" sx={{ marginTop: 1 }} className="btn-fifth" size="small" endIcon={<ArrowForwardIcon />}>
+                                <Button
+                                    variant="contained"
+                                    sx={{ marginTop: 1 }}
+                                    className="btn-fifth"
+                                    size="small"
+                                    endIcon={<ArrowForwardIcon />}
+                                    onClick={() => navigate(`/live-auction/${auction.Id}`)}
+                                >
                                     Live auction
                                 </Button>
                             )}
                             {auction.Status === "Ready" && (
-                                <Button variant="contained" sx={{ marginTop: 1 }} color="primary" size="small">
+                                <Button
+                                    variant="contained"
+                                    sx={{ marginTop: 1 }}
+                                    color="primary"
+                                    size="small"
+                                    onClick={() => startAuction(auction.Id)}
+                                >
                                     Start Auction
                                 </Button>
                             )}
@@ -303,7 +325,7 @@ const UserAuctions = () => {
                     </Grid>
                 </Paper>
             ))}
-            <AddAuctionModal open={open} onClose={handleClose} />
+            <AddAuctionModal open={open} onClose={handleClose} reLoad={loadData} />
         </>
     );
 };

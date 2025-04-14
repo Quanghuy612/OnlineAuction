@@ -2,6 +2,7 @@ import axios from "axios";
 import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
+
 const URL = "https://localhost:5001/api/v1/";
 const API = axios.create({
     baseURL: URL,
