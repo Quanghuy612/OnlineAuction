@@ -4,7 +4,6 @@ import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
     const { id, user, role, logout } = useAuth();
-    console.log(role);
     return (
         <AppBar className="header">
             <Toolbar sx={{ justifyContent: "space-between" }}>

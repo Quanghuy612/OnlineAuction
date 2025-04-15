@@ -27,13 +27,10 @@ const BreadCrumb = () => {
                     <Home fontSize="small" sx={{ mr: 0.5 }} />
                     <b>Home</b>
                 </StyledLink>
-                {pathnames.map((value, index) => {
-                    const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+                {pathnames.map((value) => {
                     return (
-                        <Typography key={to}>
-                            <Typography className="text-primary" sx={{ cursor: "default" }}>
-                                {value.charAt(0).toUpperCase() + value.slice(1)}
-                            </Typography>
+                        <Typography className="text-primary" sx={{ cursor: "default" }}>
+                            {value.charAt(0).toUpperCase() + value.slice(1)}
                         </Typography>
                     );
                 })}
