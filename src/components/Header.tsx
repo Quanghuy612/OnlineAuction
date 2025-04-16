@@ -26,7 +26,7 @@ const Header = () => {
                         </Button>
                     </NavLink>
                     {role === "Admin" && (
-                        <NavLink to="/admin">
+                        <NavLink to="/admin/auctions">
                             <Button sx={{ color: "white" }} className="btn_secondary-hover btn-fifth">
                                 Admin Page
                             </Button>
