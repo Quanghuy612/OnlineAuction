@@ -12,6 +12,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Dayjs } from "dayjs";
 import { debounce } from "lodash";
 import { useNavigate } from "react-router-dom";
+import { formatToLocalTime } from "../../utils/formatDateTime";
 
 interface AddAuctionModalProps {
     open: boolean;
@@ -98,7 +99,12 @@ const AddAuctionModal: React.FC<AddAuctionModalProps> = ({ open, onClose, reLoad
     };
 
     const addAuction = async () => {
-        const result = await apiCall<AuctionResponse[]>("POST", "/user/add-auction", undefined, form);
+        const payload = {
+            ...form,
+            startTime: form.startTime?.format(),
+            endTime: form.endTime?.format(),
+        };
+        const result = await apiCall<AuctionResponse[]>("POST", "/user/add-auction", undefined, payload);
         if (result.success) {
             setForm({
                 name: "",
@@ -292,6 +298,12 @@ const UserAuctions = () => {
                             <Typography variant="h6">{auction.ProductName}</Typography>
                             <Typography variant="body2" color="textSecondary">
                                 Starting Price: ${auction.StartingPrice.toFixed(2)}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                Starting Time: {formatToLocalTime(auction.StartTime)}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                End Time: {formatToLocalTime(auction.EndTime)}
                             </Typography>
                         </Grid>
                         <Grid size={2}>

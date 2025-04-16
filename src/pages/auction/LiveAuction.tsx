@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { HubConnectionState } from "@microsoft/signalr";
 import { useApi } from "../../store/useApi";
 import { connection } from "../../utils/signal";
+import { formatToLocalTime } from "../../utils/formatDateTime";
 
 interface Bid {
     user: string;
@@ -23,7 +24,10 @@ interface AuctionDetail {
     StartingPrice?: string;
     CurrentHighestBid?: number;
     BidPerTurn?: number;
-    Endtime?: string;
+    EndTime?: string;
+    ServerTime?: string;
+    WinnerUsername?: string;
+    Status?: string;
 }
 
 const LiveAuction: React.FC = () => {
@@ -37,6 +41,17 @@ const LiveAuction: React.FC = () => {
     const bidLogRef = useRef<HTMLDivElement>(null);
     const [reconnectAttempt, setReconnectAttempt] = useState(0);
     const { apiCall } = useApi();
+    const [timeLeft, setTimeLeft] = useState<number | null>(null);
+    const [currentTime, setCurrentTime] = useState<string | null>(null);
+    const countdownRef = useRef<NodeJS.Timeout | null>(null);
+    const auctionEndedRef = useRef(false);
+
+    const formatTimeLeft = (ms: number) => {
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    };
 
     const formatStatus = (status: string) => {
         switch (status) {
@@ -68,86 +83,134 @@ const LiveAuction: React.FC = () => {
         const auction = await apiCall<AuctionDetail>("GET", `auctions/${id}`, { auctionId: id }, undefined);
         if (auction.success) {
             setAuctionDetail(auction.data);
+            setCurrentTime(auction.data?.ServerTime ?? null);
+            if (auction.data?.Status === "Ended") {
+                console.log("🏁 Auction already ended. Not connecting to SignalR.");
+                showBidHistory();
+                connection.invoke("EndAuction", auctionId);
+                return;
+            }
+            startConnection();
         }
     };
 
-    useEffect(() => {
-        const startConnection = async () => {
-            try {
-                if (connection.state === HubConnectionState.Disconnected) {
-                    console.log("⏳ Attempting to connect to SignalR...");
+    const startConnection = async () => {
+        try {
+            if (connection.state === HubConnectionState.Disconnected) {
+                console.log("⏳ Attempting to connect to SignalR...");
+
+                try {
                     await connection.start();
                     console.log("✅ SignalR connected");
                     setAuctionStatus(HubConnectionState.Connected);
-                } else {
-                    console.log("🔁 SignalR already connected or connecting:", connection.state);
-                    setAuctionStatus(connection.state);
+                } catch (error) {
+                    console.error("❌ Failed to connect to SignalR:", error);
+                    setAuctionStatus("Error");
+                    return;
                 }
+            } else {
+                console.log("🔁 SignalR already connected or connecting:", connection.state);
+                setAuctionStatus(connection.state);
+            }
 
-                // Join the auction after a successful connection
-                const joinAuction = async () => {
-                    if (connection.state === HubConnectionState.Connected) {
-                        if (!isNaN(auctionId)) {
-                            try {
-                                await connection.invoke("JoinAuction", auctionId);
-                                console.log("📡 Joined auction:", auctionId);
-                            } catch (err) {
-                                console.error("❌ Error invoking JoinAuction:", err);
-                            }
-                        } else {
-                            console.error("🚨 Invalid auction ID:", auctionId);
+            const joinAuction = async () => {
+                if (connection.state === HubConnectionState.Connected) {
+                    if (!isNaN(auctionId)) {
+                        try {
+                            await connection.invoke("JoinAuction", auctionId);
+                            console.log("📡 Joined auction:", auctionId);
+                        } catch (err) {
+                            console.error("❌ Error invoking JoinAuction:", err);
                         }
                     } else {
-                        console.warn("⏳ Waiting to retry join...");
-                        setTimeout(joinAuction, 500);
+                        console.error("🚨 Invalid auction ID:", auctionId);
                     }
-                };
+                } else {
+                    console.warn("⏳ Waiting to retry join...");
+                    setTimeout(joinAuction, 500);
+                }
+            };
 
-                joinAuction();
+            joinAuction();
+            showBidHistory();
 
-                connection.on("ReceiveBid", (bid) => {
-                    console.log("📥 New bid received:", bid);
-                    setBids((prev) => [...prev, bid]);
-                });
+            connection.on("ReceiveBid", (bid) => {
+                console.log("📥 New bid received:", bid);
+                setBids((prev) => [...prev, bid]);
+            });
 
-                connection.on("AuctionEnded", () => {
-                    console.log("🏁 Auction ended");
-                    setAuctionStatus("Ended");
-                });
+            connection.on("AuctionEnded", async () => {
+                console.log("🏁 Auction ended via SignalR event");
+                setAuctionStatus("Ended");
+                auctionEndedRef.current = true;
+                await connection.stop();
+            });
 
-                connection.onclose(async () => {
+            connection.onclose(async () => {
+                console.log(auctionEndedRef.current);
+                if (!auctionEndedRef.current) {
                     console.log("❌ SignalR connection closed. Attempting reconnection...");
                     setAuctionStatus("Disconnected");
                     setReconnectAttempt((prev) => prev + 1);
 
-                    // Retry connection with exponential backoff
-                    const retryTimeout = Math.min(5000, 1000 * Math.pow(2, reconnectAttempt)); // Max 5 seconds retry timeout
+                    const retryTimeout = Math.min(5000, 1000 * Math.pow(2, reconnectAttempt));
+                    console.log("⏳ Retry timeout:", retryTimeout);
                     setTimeout(() => {
                         startConnection();
                     }, retryTimeout);
-                });
-            } catch (error) {
-                console.error("❌ SignalR error:", error);
-                setAuctionStatus("Error");
-            }
-        };
+                } else {
+                    console.log("🛑 Connection closed after auction end — no reconnection.");
+                }
+            });
+        } catch (error) {
+            console.error("❌ Unexpected error in startConnection:", error);
+            setAuctionStatus("Error");
+        }
+    };
 
-        // Start connection on mount
-        startConnection();
-        showBidHistory();
-        getAuctionDetail();
+    useEffect(() => {
+        getAuctionDetail(); // Call this first
 
         return () => {
-            if (connection) {
-                connection.off("ReceiveBid");
-                connection.off("AuctionEnded");
-                if (connection.state === HubConnectionState.Connected) {
-                    connection.stop();
-                    console.log("🛑 SignalR disconnected");
-                }
+            connection.off("ReceiveBid");
+            connection.off("AuctionEnded");
+            auctionEndedRef.current = true;
+            if (connection.state === HubConnectionState.Connected) {
+                connection.stop();
+                console.log("🛑 SignalR manually disconnected");
             }
         };
-    }, [auctionId, reconnectAttempt]);
+    }, [auctionId]);
+
+    useEffect(() => {
+        if (currentTime && auction?.EndTime && auction?.Status != "Ended") {
+            const endTime = new Date(auction.EndTime).getTime();
+            let serverTime = new Date(currentTime).getTime();
+            let timeDiff = endTime - serverTime;
+            setTimeLeft(timeDiff);
+
+            countdownRef.current = setInterval(() => {
+                serverTime += 1000;
+                timeDiff = endTime - serverTime;
+                if (timeDiff > 0) {
+                    setTimeLeft(timeDiff);
+                } else if (timeDiff <= 0) {
+                    clearInterval(countdownRef.current!);
+                    setAuctionStatus("Ended");
+                    setTimeLeft(0);
+                    if (auction.Status != "Ended") {
+                        apiCall("PUT", `/user/toggle-auction/${auctionId}`, undefined, "Ended");
+                    }
+                    connection.invoke("EndAuction", auctionId);
+                }
+            }, 1000);
+        }
+        return () => {
+            if (countdownRef.current) {
+                clearInterval(countdownRef.current);
+            }
+        };
+    }, [currentTime, auction?.EndTime]);
 
     useEffect(() => {
         if (bidLogRef.current) {
@@ -180,12 +243,22 @@ const LiveAuction: React.FC = () => {
                         {auction ? (
                             <>
                                 <Typography variant="h5">Auction: {auction.Name}</Typography>
+                                <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
                                 <Typography variant="body1">Product Name: {auction.ProductName}</Typography>
                                 <Typography variant="body1">Seller: {auction.Username}</Typography>
                                 <Typography variant="body1">Starting Price: ${auction.StartingPrice}</Typography>
                                 <Typography variant="body1">Bid Increment: ${auction.BidPerTurn}</Typography>
                                 <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
+                                <Typography variant="body1" sx={{ marginRight: 1 }}>
+                                    ⏳ Time left: {!timeLeft ? "00:00" : formatTimeLeft(timeLeft)}
+                                </Typography>
+                                <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
                                 <Typography variant="body1">Current Highest Bid: ${auction.CurrentHighestBid}</Typography>
+                                {auction.WinnerUsername && (
+                                    <Typography variant="body1" sx={{ marginRight: 1 }}>
+                                        Winner: {auction.WinnerUsername}
+                                    </Typography>
+                                )}
                             </>
                         ) : (
                             <Typography variant="body2" color="text.secondary">
@@ -224,9 +297,9 @@ const LiveAuction: React.FC = () => {
                             {bidHistory.map((history, index) => (
                                 <Box key={index} sx={{ marginBottom: 1 }}>
                                     <Grid container spacing={2}>
-                                        <Grid size={6}>
+                                        <Grid size={4}>
                                             <Typography variant="body2">
-                                                <strong>{new Date(history.Timestamp).toLocaleString()}</strong>
+                                                <strong>{formatToLocalTime(history.Timestamp)}:</strong>
                                             </Typography>
                                         </Grid>
                                         <Grid size={6}>

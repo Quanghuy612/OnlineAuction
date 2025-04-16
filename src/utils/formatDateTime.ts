@@ -1,25 +1,25 @@
-import { DateTime } from "luxon";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 
-export const formatDateToString = (date: string | Date | null): string => {
-    if (!date) return "";
+// Extend dayjs with plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-    const parsedDate = typeof date === "string" ? DateTime.fromISO(date) : DateTime.fromJSDate(date);
-
-    return parsedDate.isValid ? parsedDate.toFormat("dd/MM/yyyy") : "";
-};
-
-export const formatDateTimeToString = (date: string | Date | null): string => {
-    if (!date) return "";
-
-    const parsedDate = typeof date === "string" ? DateTime.fromISO(date) : DateTime.fromJSDate(date);
-
-    return parsedDate.isValid ? parsedDate.toFormat("dd/MM/yyyy - HH:mm") : "";
-};
-
-export const parseStringToDate = (dateString: string): string | null => {
-    if (!dateString) return null;
-
-    const parsedDate = DateTime.fromFormat(dateString, "dd/MM/yyyy");
-
-    return parsedDate.isValid ? parsedDate.toISODate() : null;
+/**
+ * Converts a UTC datetime string to local time and formats it.
+ *
+ * @param utcDateStr - The UTC datetime string (e.g., from the backend).
+ * @param format - Optional format string (default: "DD/MM/YYYY HH:mm")
+ * @param tz - Optional timezone (default: local timezone of the browser)
+ * @returns Formatted local time string
+ */
+export const formatToLocalTime = (utcDateStr: string, format = "DD/MM/YYYY - HH:mm", tz?: string): string => {
+    try {
+        const localTz = tz || dayjs.tz.guess(); // e.g., 'Asia/Bangkok'
+        return dayjs.utc(utcDateStr).tz(localTz).format(format);
+    } catch (e) {
+        console.error("Invalid date string:" + e, utcDateStr);
+        return utcDateStr;
+    }
 };
