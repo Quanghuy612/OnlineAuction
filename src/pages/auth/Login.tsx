@@ -30,9 +30,17 @@ function Login() {
         if (result.success && result.data) {
             const { Token } = result.data as { Token: string };
             const { RefreshToken } = result.data as { RefreshToken: string };
+
+            localStorage.setItem("accessToken", Token);
+            localStorage.setItem("refreshToken", RefreshToken);
+
+            // console.log("Token:", Token);
+            // console.log("Refresh Token:", RefreshToken);
             login(Token, RefreshToken);
         }
     };
+
+
 
     return (
         <Container maxWidth="sm">
