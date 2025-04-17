@@ -1,0 +1,54 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Rider / VS Code / VS
+.vs/
+.vscode/
+.idea/
+*.sln.docstates
+
+# ASP.NET secrets
+secrets.json
+*.dbmdl
+
+# Configuration
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.json
+appsettings.json
+
+# Logs
+*.log
+
+# Dotnet-specific
+project.lock.json
+project.fragment.lock.json
+
+# NPM / Frontend-related (if using React/Angular in ASP.NET Core)
+node_modules/
+package-lock.json
+yarn.lock
+npm-debug.log*
+
+# Environment variables
+.env
+.env.*
+
+# OS-related
+.DS_Store
+Thumbs.db
+
+# Publish artifacts
+*.publish/
+
+# Others
+*.vspscc
+*.vssscc
+_ReSharper*/
+*.DotSettings
+OnlineAuction_BE.csproj
