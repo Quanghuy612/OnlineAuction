@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useApi } from "../../store/useApi";
+import { useNavigate } from "react-router-dom";
 
 function AuctionList() {
     const { apiCall, data, loading, message } = useApi();
     const [status, setStatus] = useState("Waitting");
+    const navigate = useNavigate();
 
     // Fetch các đơn hàng của admin để duyệt
     const fetchAuctions = async () => {
@@ -61,7 +63,8 @@ const handleReject = async (id: number) => {
                         <div className="card shadow-sm">
                             <div className="card-body">
                                 <div className="mb-3">
-                                    <h5 className="card-title">{auction.Name}</h5>
+                                    <br />
+                                    <p><strong>Name:</strong> {auction.Name}</p>
                                     <p><strong>Status:</strong> {auction.Status}</p>
                                     <p><strong>Product ID:</strong> {auction.ProductId}</p>
                                     <p><strong>Owner ID:</strong> {auction.OwnerId}</p>
@@ -89,6 +92,13 @@ const handleReject = async (id: number) => {
                                         </button>
                                     </div>
                                 )}
+
+<button
+                                    className="btn btn-info mt-2"
+                                    onClick={() => navigate(`/admin/user/${auction.Id}`)}
+                                >
+                                    View User Activity
+                                </button>
                             </div>
                         </div>
                     </div>
